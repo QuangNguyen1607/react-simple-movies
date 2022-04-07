@@ -8,6 +8,9 @@ module.exports = {
 			colors: {
 				primary: "#F62682",
 			},
+			background: {
+				primary: "#F62682",
+			},
 		},
 	},
 	plugins: [],
