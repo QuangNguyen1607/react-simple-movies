@@ -2,13 +2,17 @@ import React, { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import MovieCard from "./MovieCard";
 import useSWR from "swr";
-import { fetcher } from "../../config";
+import { fetcher, tmdbAPI } from "../../config";
 import PropTypes from "prop-types";
 // https://api.themoviedb.org/3/movie/now_playing?5ae50b730fe5db9d3c61455f704dc94f
 const MovieList = ({ type = "now_playing" }) => {
 	const [movies, setMovies] = useState([]);
+	// const { data, error } = useSWR(
+	// 	`https://api.themoviedb.org/3/movie/${type}?api_key=5ae50b730fe5db9d3c61455f704dc94f`,
+	// 	fetcher
+	// );
 	const { data, error } = useSWR(
-		`https://api.themoviedb.org/3/movie/${type}?api_key=5ae50b730fe5db9d3c61455f704dc94f`,
+		tmdbAPI.getMovieList(type),
 		fetcher
 	);
 	useEffect(() => {
