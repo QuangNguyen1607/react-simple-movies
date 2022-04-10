@@ -54,16 +54,93 @@ const MovieDetailPage = () => {
 					Cast
 				</div>
 				<div className="grid grid-cols-4 gap-5 mt-10 mb-10">
-					<MovieCredits></MovieCredits>
+					<MovieMeta type="credits"></MovieMeta>
 				</div>
 				<div className="mt-10 mb-10">
-					<MovieVideos></MovieVideos>
+					<MovieMeta type="videos"></MovieMeta>
 				</div>
-				<MovieSimilar></MovieSimilar>
+				<MovieMeta type="similar"></MovieMeta>
 			</div>
 		</>
 	);
 };
+// Hiểu tại sao type phải có destructuring không, vì đây là props component nó không phải function bình thường mà chỉ cần truyền function(type)
+function MovieMeta({ type = "video" }) {
+	const { movieId } = useParams();
+	const { data, error } = useSWR(
+		tmdbAPI.getMovieMeta(movieId, type),
+		fetcher
+	);
+	if (!data) return null;
+	if (type === "credits") {
+		const { cast } = data;
+        console.log("🚀 ~ file: MovieDetailPage.js ~ line 81 ~ MovieMeta ~ cast", cast)
+		if (!cast || cast.length <= 0) return null;
+		return (
+			<>
+				{/* Sử dụng slice để chỉ lấy 4 thằng thôi */}
+				{cast.slice(0, 4).map(item => (
+					<div className="w-full h-full" key={item.id}>
+						<img
+							src={tmdbAPI.imageOriginal(item.profile_path)}
+							alt=""
+						/>
+						<h3 className="p-3 text-xl text-white font-bold">
+							{item.name}
+						</h3>
+					</div>
+				))}
+			</>
+		);
+	} else {
+		const { results } = data;
+		if (!results || results.length <= 0) return null;
+		if (type === "videos")
+			return (
+				<>
+					<div className="w-full aspect-video">
+						{/* Đinh cao cái class aspect-video */}
+
+						<h2 className="text-3xl mb-10 inline-block text-white bg-primary py-5 px-5">
+							{results[0].name}
+						</h2>
+						<iframe
+							width="100%"
+							height="500"
+							src={`https://www.youtube.com/embed/${results[0].key}`}
+							title="YouTube video player"
+							frameBorder="0"
+							allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+							allowFullScreen
+							className="w-full h-full object-fill"
+						></iframe>
+					</div>
+				</>
+			);
+		if (type === "similar")
+			return (
+				<div className="py-10">
+					<h2 className="text-5xl mb-10 mt-10 font-bold text-white text-center">
+						Similar Movies
+					</h2>
+					<Swiper
+						grabCursor={"true"}
+						spaceBetween={40}
+						slidesPerView={4}
+					>
+						{results.length > 0 &&
+							results.map(item => (
+								<SwiperSlide className="h-auto" key={item.id}>
+									<MovieCard item={item}></MovieCard>
+								</SwiperSlide>
+							))}
+					</Swiper>
+				</div>
+			);
+	}
+	return null;
+}
+
 function MovieCredits() {
 	const { movieId } = useParams();
 	const { data, error } = useSWR(
@@ -90,6 +167,7 @@ function MovieCredits() {
 		</>
 	);
 }
+
 function MovieVideos() {
 	const { movieId } = useParams();
 	const { data, error } = useSWR(

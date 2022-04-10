@@ -4,10 +4,25 @@ const tmdbEndpoint = "https://api.themoviedb.org/3/movie";
 const tmdbEndpointSearch = "https://api.themoviedb.org/3/search/movie";
 export const tmdbAPI = {
 	getMovieList: (type, page = 1) =>
-		`${tmdbEndpoint}/${type}?api_key=${apiKey}${page ? `&page=${page}` : ''}`,
+		`${tmdbEndpoint}/${type}?api_key=${apiKey}${
+			page ? `&page=${page}` : ""
+		}`,
 	getMovieDetail: movieId => `${tmdbEndpoint}/${movieId}?api_key=${apiKey}`,
 	getMovieMeta: (movieId, meta) =>
 		`${tmdbEndpoint}/${movieId}/${meta}?api_key=${apiKey}`,
 	imageOriginal: url => `https://image.tmdb.org/t/p/original/${url}`,
-	getMovieSearch: (query, nextPage) => `${tmdbEndpointSearch}?api_key=${apiKey}&query=${query}&page=${nextPage}`,
+	getMovieSearch: (query, nextPage) =>
+		`${tmdbEndpointSearch}?api_key=${apiKey}&query=${query}&page=${nextPage}`,
 };
+// export function FallbackComponent() {
+// 	return (
+// 		<p className="bg-red-50 text-red-400">
+// 			Something went wrong with this component
+// 		</p>
+// 	);
+// }
+export const FallbackComponent = () => (
+	<p className="bg-red-50 text-red-400">
+		Something went wrong with this component
+	</p>
+);

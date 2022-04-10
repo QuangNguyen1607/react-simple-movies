@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import useSWR from "swr";
-import MovieCard from "../component/movie/MovieCard";
+import MovieCard, { MovieCardSkeleton } from "../component/movie/MovieCard";
 import { apiKey, fetcher, tmdbAPI } from "../config";
 import useDebounce from "../hook/useDebounce";
 import ReactPaginate from "react-paginate";
+import { v4 } from "uuid";
+import Button from "component/button/Button";
+import useSWRInfinite from 'swr/infinite'
 
 const itemsPerPage = 20;
 const pageCount = 5;
@@ -68,9 +71,21 @@ const MoviePage = () => {
 				</button>
 			</div>
 			{/* Chổ này nếu có loading thì hiện cái dưới */}
-			{loading && (
-				<div className="w-10 h-10 rounded-full border-4 border-primary border-t-transparent border-t-4 animate-spin mx-auto"></div>
-			)}
+			{/* {loading && (
+				<div className="w-10 h-10 rounded-full border-4 border-primary border-t-transparent border-t-4 animate-spin mx-auto mb-10 "></div>
+			)} */}
+
+			<div className="grid grid-cols-4 gap-10">
+				{/* Chở này không có loading và movies có giá trị thì mới show cái kia ra */}
+				{/* Chổ này do xài map mà map thì phải có key mà này ko có dữ liệu */}
+				{/* Cái v4 này là 1 function nó sẽ trả về key theo milisecond vì vậy ko bao giờ bị trùng */}
+				{loading &&
+					Array(itemsPerPage)
+						.fill(null)
+						.map(item => (
+							<MovieCardSkeleton key={v4()}></MovieCardSkeleton>
+						))}
+			</div>
 			<div className="grid grid-cols-4 gap-10">
 				{/* Chở này không có loading và movies có giá trị thì mới show cái kia ra */}
 				{!loading &&
@@ -79,6 +94,7 @@ const MoviePage = () => {
 						<MovieCard item={item} key={item.id}></MovieCard>
 					))}
 			</div>
+			{/* Chức năng loadmore */}
 			<div className="mt-10 text-white">
 				<ReactPaginate
 					breakLabel="..."
